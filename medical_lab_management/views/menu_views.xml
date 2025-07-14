@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Main Menu -->
+        <menuitem id="menu_medical_lab_root" 
+                  name="Medical Lab" 
+                  sequence="10"/>
+        
+        <!-- Dashboard Menu -->
+        <menuitem id="menu_medical_dashboard" 
+                  name="Dashboard" 
+                  parent="menu_medical_lab_root" 
+                  sequence="1"/>
+        
+        <!-- Patient Management Menu -->
+        <menuitem id="menu_medical_patient" 
+                  name="Patient Management" 
+                  parent="menu_medical_lab_root" 
+                  sequence="10"/>
+        
+        <menuitem id="menu_medical_patient_patients" 
+                  name="Patients" 
+                  parent="menu_medical_patient" 
+                  action="action_medical_patient" 
+                  sequence="1"/>
+        
+        <menuitem id="menu_medical_patient_doctors" 
+                  name="Doctors" 
+                  parent="menu_medical_patient" 
+                  action="action_medical_doctor" 
+                  sequence="2"/>
+        
+        <!-- Workflow Menu -->
+        <menuitem id="menu_medical_workflow" 
+                  name="Workflow" 
+                  parent="menu_medical_lab_root" 
+                  sequence="20"/>
+        
+        <menuitem id="menu_medical_workflow_invoices" 
+                  name="Invoices" 
+                  parent="menu_medical_workflow" 
+                  action="action_medical_invoice" 
+                  sequence="1"/>
+        
+        <menuitem id="menu_medical_workflow_samples" 
+                  name="Sample Collection" 
+                  parent="menu_medical_workflow" 
+                  action="action_medical_sample" 
+                  sequence="2"/>
+        
+        <menuitem id="menu_medical_workflow_diagnosis" 
+                  name="Diagnosis" 
+                  parent="menu_medical_workflow" 
+                  action="action_medical_diagnosis" 
+                  sequence="3"/>
+        
+        <menuitem id="menu_medical_workflow_printing" 
+                  name="Printing" 
+                  parent="menu_medical_workflow" 
+                  action="action_medical_printing" 
+                  sequence="4"/>
+        
+        <!-- Configuration Menu -->
+        <menuitem id="menu_medical_configuration" 
+                  name="Configuration" 
+                  parent="menu_medical_lab_root" 
+                  sequence="30"/>
+        
+        <menuitem id="menu_medical_configuration_tests" 
+                  name="Tests" 
+                  parent="menu_medical_configuration" 
+                  action="action_medical_test" 
+                  sequence="1"/>
+        
+        <menuitem id="menu_medical_configuration_categories" 
+                  name="Test Categories" 
+                  parent="menu_medical_configuration" 
+                  action="action_medical_test_category" 
+                  sequence="2"/>
+        
+        <menuitem id="menu_medical_configuration_departments" 
+                  name="Departments" 
+                  parent="menu_medical_configuration" 
+                  action="action_medical_department" 
+                  sequence="3"/>
+        
+        <menuitem id="menu_medical_configuration_machines" 
+                  name="Machines" 
+                  parent="menu_medical_configuration" 
+                  action="action_medical_machine" 
+                  sequence="4"/>
+        
+        <!-- Reports Menu -->
+        <menuitem id="menu_medical_reports" 
+                  name="Reports" 
+                  parent="menu_medical_lab_root" 
+                  sequence="40"/>
+        
+        <!-- Settings Menu -->
+        <menuitem id="menu_medical_settings" 
+                  name="Settings" 
+                  parent="menu_medical_lab_root" 
+                  sequence="50"/>
+        
+        <!-- Quick Actions Menu -->
+        <menuitem id="menu_medical_quick_actions" 
+                  name="Quick Actions" 
+                  parent="menu_medical_lab_root" 
+                  sequence="5"/>
+        
+        <!-- New Patient Quick Action -->
+        <record id="action_medical_new_patient" model="ir.actions.act_window">
+            <field name="name">New Patient</field>
+            <field name="res_model">medical.patient</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <menuitem id="menu_medical_quick_new_patient" 
+                  name="New Patient" 
+                  parent="menu_medical_quick_actions" 
+                  action="action_medical_new_patient" 
+                  sequence="1"/>
+        
+        <!-- New Invoice Quick Action -->
+        <record id="action_medical_new_invoice" model="ir.actions.act_window">
+            <field name="name">New Invoice</field>
+            <field name="res_model">medical.invoice</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <menuitem id="menu_medical_quick_new_invoice" 
+                  name="New Invoice" 
+                  parent="menu_medical_quick_actions" 
+                  action="action_medical_new_invoice" 
+                  sequence="2"/>
+        
+        <!-- New Doctor Quick Action -->
+        <record id="action_medical_new_doctor" model="ir.actions.act_window">
+            <field name="name">New Doctor</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_is_doctor': True}</field>
+        </record>
+        
+        <menuitem id="menu_medical_quick_new_doctor" 
+                  name="New Doctor" 
+                  parent="menu_medical_quick_actions" 
+                  action="action_medical_new_doctor" 
+                  sequence="3"/>
+        
+        <!-- New Test Quick Action -->
+        <record id="action_medical_new_test" model="ir.actions.act_window">
+            <field name="name">New Test</field>
+            <field name="res_model">medical.test</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{}</field>
+        </record>
+        
+        <menuitem id="menu_medical_quick_new_test" 
+                  name="New Test" 
+                  parent="menu_medical_quick_actions" 
+                  action="action_medical_new_test" 
+                  sequence="4"/>
+        
+    </data>
+</odoo>

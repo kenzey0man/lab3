@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Diagnosis Tree View -->
+        <record id="view_medical_diagnosis_tree" model="ir.ui.view">
+            <field name="name">medical.diagnosis.tree</field>
+            <field name="model">medical.diagnosis</field>
+            <field name="arch" type="xml">
+                <tree string="Diagnoses" decoration-info="state == 'pending'" decoration-success="state == 'verified'">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="test_id"/>
+                    <field name="test_name"/>
+                    <field name="diagnosis_date"/>
+                    <field name="diagnosed_by"/>
+                    <field name="result_status"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Diagnosis Form View -->
+        <record id="view_medical_diagnosis_form" model="ir.ui.view">
+            <field name="name">medical.diagnosis.form</field>
+            <field name="model">medical.diagnosis</field>
+            <field name="arch" type="xml">
+                <form string="Medical Diagnosis">
+                    <header>
+                        <button name="action_start_diagnosis" type="object" string="Start Diagnosis" 
+                                class="oe_highlight" states="pending"/>
+                        <button name="action_complete_diagnosis" type="object" string="Complete Diagnosis" 
+                                class="oe_highlight" states="in_progress"/>
+                        <button name="action_verify" type="object" string="Verify" 
+                                class="oe_highlight" states="completed"/>
+                        <button name="action_cancel" type="object" string="Cancel" 
+                                states="pending,in_progress,completed"/>
+                        <button name="action_reset_pending" type="object" string="Reset to Pending" 
+                                states="cancelled"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,in_progress,completed,verified"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" placeholder="Diagnosis ID"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Patient Information">
+                                <field name="patient_id"/>
+                                <field name="patient_name"/>
+                                <field name="patient_age"/>
+                                <field name="patient_gender"/>
+                            </group>
+                            <group string="Test Information">
+                                <field name="test_id"/>
+                                <field name="test_name"/>
+                                <field name="test_shortcut"/>
+                                <field name="test_unit"/>
+                                <field name="test_result_type"/>
+                            </group>
+                            <group string="Diagnosis Information">
+                                <field name="diagnosis_date"/>
+                                <field name="diagnosed_by"/>
+                                <field name="verified_by"/>
+                                <field name="result_status"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Results" name="results">
+                                <group string="Result Entry">
+                                    <group string="Selection Result" attrs="{'invisible': [('test_result_type', '!=', 'selection')]}">
+                                        <field name="selection_result"/>
+                                    </group>
+                                    <group string="Numeric Result" attrs="{'invisible': [('test_result_type', '!=', 'range')]}">
+                                        <field name="numeric_result"/>
+                                        <field name="normal_range_min"/>
+                                        <field name="normal_range_max"/>
+                                    </group>
+                                    <group string="Quantitative Result" attrs="{'invisible': [('test_result_type', '!=', 'quantitative')]}">
+                                        <field name="quantitative_result"/>
+                                    </group>
+                                    <group string="Descriptive Result" attrs="{'invisible': [('test_result_type', '!=', 'descriptive')]}">
+                                        <field name="descriptive_result"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Detailed Results" name="detailed_results">
+                                <field name="result_ids">
+                                    <tree editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="parameter_name"/>
+                                        <field name="result_value"/>
+                                        <field name="unit"/>
+                                        <field name="normal_range"/>
+                                        <field name="result_status"/>
+                                        <field name="notes"/>
+                                        <field name="performed_by"/>
+                                        <field name="performed_date"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="diagnosis_notes" placeholder="Enter diagnosis notes here..."/>
+                                <field name="verification_notes" placeholder="Enter verification notes here..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Diagnosis Search View -->
+        <record id="view_medical_diagnosis_search" model="ir.ui.view">
+            <field name="name">medical.diagnosis.search</field>
+            <field name="model">medical.diagnosis</field>
+            <field name="arch" type="xml">
+                <search string="Search Diagnoses">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="test_id"/>
+                    <field name="test_name"/>
+                    <separator/>
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                    <filter string="Verified" name="verified" domain="[('state', '=', 'verified')]"/>
+                    <separator/>
+                    <filter string="Normal Results" name="normal" domain="[('result_status', '=', 'normal')]"/>
+                    <filter string="Abnormal Results" name="abnormal" domain="[('result_status', 'in', ['high', 'low', 'positive', 'negative', 'abnormal'])]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Patient" name="group_patient" context="{'group_by': 'patient_id'}"/>
+                        <filter string="Test" name="group_test" context="{'group_by': 'test_id'}"/>
+                        <filter string="Result Status" name="group_result_status" context="{'group_by': 'result_status'}"/>
+                        <filter string="Diagnosis Date" name="group_diagnosis_date" context="{'group_by': 'diagnosis_date:day'}"/>
+                        <filter string="Diagnosed By" name="group_diagnosed_by" context="{'group_by': 'diagnosed_by'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Diagnosis Action -->
+        <record id="action_medical_diagnosis" model="ir.actions.act_window">
+            <field name="name">Diagnoses</field>
+            <field name="res_model">medical.diagnosis</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first diagnosis!
+                </p>
+                <p>
+                    Record test results and manage the diagnosis workflow.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
