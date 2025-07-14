@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Receipt Report Template -->
+        <template id="receipt_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="medical_lab_management.receipt_report_document"/>
+                </t>
+            </t>
+        </template>
+        
+        <!-- Receipt Report Document -->
+        <template id="receipt_report_document">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <!-- Header -->
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2>Medical Laboratory Receipt</h2>
+                            <p><strong>Receipt No:</strong> <span t-field="o.name"/></p>
+                            <p><strong>Date:</strong> <span t-field="o.invoice_date"/></p>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    
+                    <!-- Patient Information -->
+                    <div class="row">
+                        <div class="col-6">
+                            <h4>Patient Information</h4>
+                            <p><strong>Name:</strong> <span t-field="o.patient_id.name"/></p>
+                            <p><strong>ID:</strong> <span t-field="o.patient_id.patient_id"/></p>
+                            <p><strong>Phone:</strong> <span t-field="o.patient_id.phone"/></p>
+                        </div>
+                        <div class="col-6">
+                            <h4>Payment Information</h4>
+                            <p><strong>Amount Paid:</strong> <span t-field="o.amount_paid"/></p>
+                            <p><strong>Payment Method:</strong> Cash</p>
+                            <p><strong>Received By:</strong> <span t-field="o.user_id.name"/></p>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    
+                    <!-- Tests Table -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Tests Performed</h4>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Test Name</th>
+                                        <th>Price</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td><span t-field="line.sequence"/></td>
+                                        <td><span t-field="line.test_id.name"/></td>
+                                        <td><span t-field="line.price_unit"/></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="2" class="text-right"><strong>Subtotal:</strong></td>
+                                        <td><span t-field="o.subtotal"/></td>
+                                    </tr>
+                                    <tr t-if="o.discount > 0">
+                                        <td colspan="2" class="text-right"><strong>Discount:</strong></td>
+                                        <td><span t-field="o.discount"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-right"><strong>Total:</strong></td>
+                                        <td><span t-field="o.total"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" class="text-right"><strong>Amount Paid:</strong></td>
+                                        <td><span t-field="o.amount_paid"/></td>
+                                    </tr>
+                                    <tr t-if="o.amount_due > 0">
+                                        <td colspan="2" class="text-right"><strong>Amount Due:</strong></td>
+                                        <td><span t-field="o.amount_due"/></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Notes -->
+                    <div class="row" t-if="o.visit_notes">
+                        <div class="col-12">
+                            <p><strong>Notes:</strong></p>
+                            <p t-field="o.visit_notes"/>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <p>Thank you for choosing our medical laboratory services.</p>
+                            <p><strong>For any queries, please contact us.</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Receipt Report Action -->
+        <record id="action_receipt_report" model="ir.actions.report">
+            <field name="name">Receipt</field>
+            <field name="model">medical.invoice</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">medical_lab_management.receipt_report_template</field>
+            <field name="report_file">medical_lab_management.receipt_report_template</field>
+            <field name="print_report_name">'Receipt - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_medical_invoice"/>
+            <field name="binding_type">report</field>
+        </record>
+        
+    </data>
+</odoo>

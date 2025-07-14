@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        
+        <!-- Medical Lab Management Security Groups -->
+        
+        <!-- Reception Group -->
+        <record id="group_medical_reception" model="res.groups">
+            <field name="name">Medical Lab - Reception</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with reception access can manage patients and create invoices.</field>
+        </record>
+        
+        <!-- Sample Collection Group -->
+        <record id="group_medical_sample_collection" model="res.groups">
+            <field name="name">Medical Lab - Sample Collection</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with sample collection access can collect samples and update sample status.</field>
+        </record>
+        
+        <!-- Diagnosis Group -->
+        <record id="group_medical_diagnosis" model="res.groups">
+            <field name="name">Medical Lab - Diagnosis</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with diagnosis access can perform tests and record results.</field>
+        </record>
+        
+        <!-- Printing Group -->
+        <record id="group_medical_printing" model="res.groups">
+            <field name="name">Medical Lab - Printing</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with printing access can print reports and manage printing workflow.</field>
+        </record>
+        
+        <!-- Manager Group -->
+        <record id="group_medical_manager" model="res.groups">
+            <field name="name">Medical Lab - Manager</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with manager access have full access to all medical lab features.</field>
+            <field name="implied_ids" eval="[(4, ref('group_medical_reception')), (4, ref('group_medical_sample_collection')), (4, ref('group_medical_diagnosis')), (4, ref('group_medical_printing'))]"/>
+        </record>
+        
+        <!-- Administrator Group -->
+        <record id="group_medical_administrator" model="res.groups">
+            <field name="name">Medical Lab - Administrator</field>
+            <field name="category_id" ref="base.module_category_human_resources"/>
+            <field name="comment">Users with administrator access can configure the system and manage all data.</field>
+            <field name="implied_ids" eval="[(4, ref('group_medical_manager'))]"/>
+        </record>
+        
+    </data>
+</odoo>

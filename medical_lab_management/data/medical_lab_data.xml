@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Sequences -->
+        <record id="seq_medical_patient" model="ir.sequence">
+            <field name="name">Medical Patient</field>
+            <field name="code">medical.patient</field>
+            <field name="prefix">PAT</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_medical_invoice" model="ir.sequence">
+            <field name="name">Medical Invoice</field>
+            <field name="code">medical.invoice</field>
+            <field name="prefix">INV</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_medical_barcode" model="ir.sequence">
+            <field name="name">Medical Barcode</field>
+            <field name="code">medical.barcode</field>
+            <field name="prefix">BC</field>
+            <field name="padding">8</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_medical_sample" model="ir.sequence">
+            <field name="name">Medical Sample</field>
+            <field name="code">medical.sample</field>
+            <field name="prefix">SMP</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_medical_diagnosis" model="ir.sequence">
+            <field name="name">Medical Diagnosis</field>
+            <field name="code">medical.diagnosis</field>
+            <field name="prefix">DIA</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <record id="seq_medical_printing" model="ir.sequence">
+            <field name="name">Medical Printing</field>
+            <field name="code">medical.printing</field>
+            <field name="prefix">PRT</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+        
+        <!-- Test Categories -->
+        <record id="category_hematology" model="medical.test.category">
+            <field name="name">Hematology</field>
+            <field name="description">Blood cell count and related tests</field>
+        </record>
+        
+        <record id="category_biochemistry" model="medical.test.category">
+            <field name="name">Biochemistry</field>
+            <field name="description">Chemical analysis of body fluids</field>
+        </record>
+        
+        <record id="category_immunology" model="medical.test.category">
+            <field name="name">Immunology</field>
+            <field name="description">Immune system related tests</field>
+        </record>
+        
+        <record id="category_microbiology" model="medical.test.category">
+            <field name="name">Microbiology</field>
+            <field name="description">Microorganism detection and culture</field>
+        </record>
+        
+        <!-- Departments -->
+        <record id="department_hematology" model="medical.department">
+            <field name="name">Hematology Department</field>
+            <field name="code">HEMA</field>
+            <field name="description">Blood analysis and cell counting</field>
+        </record>
+        
+        <record id="department_biochemistry" model="medical.department">
+            <field name="name">Biochemistry Department</field>
+            <field name="code">BIOC</field>
+            <field name="description">Chemical analysis of body fluids</field>
+        </record>
+        
+        <record id="department_immunology" model="medical.department">
+            <field name="name">Immunology Department</field>
+            <field name="code">IMMU</field>
+            <field name="description">Immune system testing</field>
+        </record>
+        
+        <!-- Machines -->
+        <record id="machine_hematology_analyzer" model="medical.machine">
+            <field name="name">Hematology Analyzer</field>
+            <field name="model">HA-2000</field>
+            <field name="manufacturer">Medical Systems Inc.</field>
+            <field name="serial_number">HA2000-001</field>
+        </record>
+        
+        <record id="machine_biochemistry_analyzer" model="medical.machine">
+            <field name="name">Biochemistry Analyzer</field>
+            <field name="model">BA-3000</field>
+            <field name="manufacturer">LabTech Solutions</field>
+            <field name="serial_number">BA3000-001</field>
+        </record>
+        
+        <!-- Price Lists -->
+        <record id="price_list_standard" model="medical.price.list">
+            <field name="name">Standard Price List</field>
+            <field name="description">Standard pricing for all tests</field>
+        </record>
+        
+        <record id="price_list_premium" model="medical.price.list">
+            <field name="name">Premium Price List</field>
+            <field name="description">Premium pricing for VIP patients</field>
+        </record>
+        
+        <!-- Sample Tests -->
+        <record id="test_cbc" model="medical.test">
+            <field name="name">Complete Blood Count (CBC)</field>
+            <field name="shortcut">CBC</field>
+            <field name="unit">cells/μL</field>
+            <field name="sample_type">Blood</field>
+            <field name="category_id" ref="category_hematology"/>
+            <field name="department_id" ref="department_hematology"/>
+            <field name="machine_id" ref="machine_hematology_analyzer"/>
+            <field name="result_type">range</field>
+            <field name="universal_range">True</field>
+            <field name="normal_range_min">4000</field>
+            <field name="normal_range_max">11000</field>
+            <field name="report_style">table</field>
+            <field name="price">50.0</field>
+            <field name="price_list_ids" eval="[(6, 0, [ref('price_list_standard'), ref('price_list_premium')])]"/>
+        </record>
+        
+        <record id="test_glucose" model="medical.test">
+            <field name="name">Blood Glucose</field>
+            <field name="shortcut">GLU</field>
+            <field name="unit">mg/dL</field>
+            <field name="sample_type">Blood</field>
+            <field name="category_id" ref="category_biochemistry"/>
+            <field name="department_id" ref="department_biochemistry"/>
+            <field name="machine_id" ref="machine_biochemistry_analyzer"/>
+            <field name="result_type">range</field>
+            <field name="universal_range">True</field>
+            <field name="normal_range_min">70</field>
+            <field name="normal_range_max">100</field>
+            <field name="report_style">table</field>
+            <field name="price">30.0</field>
+            <field name="price_list_ids" eval="[(6, 0, [ref('price_list_standard'), ref('price_list_premium')])]"/>
+        </record>
+        
+        <record id="test_blood_group" model="medical.test">
+            <field name="name">Blood Group</field>
+            <field name="shortcut">BG</field>
+            <field name="unit"></field>
+            <field name="sample_type">Blood</field>
+            <field name="category_id" ref="category_immunology"/>
+            <field name="department_id" ref="department_immunology"/>
+            <field name="result_type">selection</field>
+            <field name="selection_options">A+,A-,B+,B-,AB+,AB-,O+,O-</field>
+            <field name="report_style">table</field>
+            <field name="price">25.0</field>
+            <field name="price_list_ids" eval="[(6, 0, [ref('price_list_standard'), ref('price_list_premium')])]"/>
+        </record>
+        
+        <record id="test_urinalysis" model="medical.test">
+            <field name="name">Urinalysis</field>
+            <field name="shortcut">UA</field>
+            <field name="unit"></field>
+            <field name="sample_type">Urine</field>
+            <field name="category_id" ref="category_biochemistry"/>
+            <field name="department_id" ref="department_biochemistry"/>
+            <field name="result_type">descriptive</field>
+            <field name="report_style">table</field>
+            <field name="price">40.0</field>
+            <field name="price_list_ids" eval="[(6, 0, [ref('price_list_standard'), ref('price_list_premium')])]"/>
+        </record>
+        
+        <!-- Test Packages -->
+        <record id="package_routine_checkup" model="medical.test.package">
+            <field name="name">Routine Health Checkup</field>
+            <field name="description">Basic health screening package</field>
+            <field name="test_ids" eval="[(6, 0, [ref('test_cbc'), ref('test_glucose')])]"/>
+        </record>
+        
+        <record id="package_comprehensive" model="medical.test.package">
+            <field name="name">Comprehensive Health Checkup</field>
+            <field name="description">Complete health screening package</field>
+            <field name="test_ids" eval="[(6, 0, [ref('test_cbc'), ref('test_glucose'), ref('test_blood_group'), ref('test_urinalysis')])]"/>
+        </record>
+        
+    </data>
+</odoo>

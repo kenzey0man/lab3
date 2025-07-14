@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Worksheet Report Template -->
+        <template id="worksheet_report_template">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="medical_lab_management.worksheet_report_document"/>
+                </t>
+            </t>
+        </template>
+        
+        <!-- Worksheet Report Document -->
+        <template id="worksheet_report_document">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <!-- Header -->
+                    <div class="row">
+                        <div class="col-6">
+                            <h2>Medical Laboratory Worksheet</h2>
+                            <p><strong>Invoice ID:</strong> <span t-field="o.name"/></p>
+                            <p><strong>Barcode ID:</strong> <span t-field="o.barcode"/></p>
+                            <p><strong>Date:</strong> <span t-field="o.invoice_date"/></p>
+                        </div>
+                        <div class="col-6 text-right">
+                            <h3>Patient Information</h3>
+                            <p><strong>Patient ID:</strong> <span t-field="o.patient_id.patient_id"/></p>
+                            <p><strong>Name:</strong> <span t-field="o.patient_id.name"/></p>
+                            <p><strong>Age:</strong> <span t-field="o.patient_id.age"/></p>
+                            <p><strong>Gender:</strong> <span t-field="o.patient_id.gender"/></p>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    
+                    <!-- Doctor Information -->
+                    <div class="row">
+                        <div class="col-6">
+                            <p><strong>Referring Doctor:</strong> <span t-field="o.referral_doctor_id.name"/></p>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Created By:</strong> <span t-field="o.user_id.name"/></p>
+                        </div>
+                    </div>
+                    
+                    <!-- Visit Notes -->
+                    <div class="row" t-if="o.visit_notes">
+                        <div class="col-12">
+                            <p><strong>Visit Notes:</strong></p>
+                            <p t-field="o.visit_notes"/>
+                        </div>
+                    </div>
+                    
+                    <hr/>
+                    
+                    <!-- Tests Table -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h4>Required Tests</h4>
+                            <table class="table table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Test Name</th>
+                                        <th>Shortcut</th>
+                                        <th>Sample Type</th>
+                                        <th>Unit</th>
+                                        <th>Result</th>
+                                        <th>Normal Range</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td><span t-field="line.sequence"/></td>
+                                        <td><span t-field="line.test_id.name"/></td>
+                                        <td><span t-field="line.test_id.shortcut"/></td>
+                                        <td><span t-field="line.test_id.sample_type"/></td>
+                                        <td><span t-field="line.test_id.unit"/></td>
+                                        <td style="min-height: 30px; border: 1px solid #ccc;"></td>
+                                        <td>
+                                            <t t-if="line.test_id.result_type == 'range'">
+                                                <span t-field="line.test_id.normal_range_min"/> - <span t-field="line.test_id.normal_range_max"/>
+                                            </t>
+                                            <t t-elif="line.test_id.result_type == 'selection'">
+                                                <span t-field="line.test_id.selection_options"/>
+                                            </t>
+                                        </td>
+                                        <td><span t-field="line.state"/></td>
+                                        <td style="min-height: 30px; border: 1px solid #ccc;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Signature Section -->
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <p><strong>Sample Collected By:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Date & Time:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <p><strong>Diagnosed By:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Date & Time:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-6">
+                            <p><strong>Verified By:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                        <div class="col-6">
+                            <p><strong>Date & Time:</strong></p>
+                            <div style="border-top: 1px solid #000; width: 200px; height: 50px;"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <small>This worksheet is for manual recording of test results. Please ensure all fields are completed accurately.</small>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+        
+        <!-- Worksheet Report Action -->
+        <record id="action_worksheet_report" model="ir.actions.report">
+            <field name="name">Worksheet</field>
+            <field name="model">medical.invoice</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">medical_lab_management.worksheet_report_template</field>
+            <field name="report_file">medical_lab_management.worksheet_report_template</field>
+            <field name="print_report_name">'Worksheet - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_medical_invoice"/>
+            <field name="binding_type">report</field>
+        </record>
+        
+    </data>
+</odoo>

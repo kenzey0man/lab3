@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Printing Tree View -->
+        <record id="view_medical_printing_tree" model="ir.ui.view">
+            <field name="name">medical.printing.tree</field>
+            <field name="model">medical.printing</field>
+            <field name="arch" type="xml">
+                <tree string="Printing" decoration-info="state == 'pending'" decoration-success="state == 'delivered'">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="report_type"/>
+                    <field name="print_date"/>
+                    <field name="printed_by"/>
+                    <field name="signed_by"/>
+                    <field name="signed_date"/>
+                    <field name="test_count"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Printing Form View -->
+        <record id="view_medical_printing_form" model="ir.ui.view">
+            <field name="name">medical.printing.form</field>
+            <field name="model">medical.printing</field>
+            <field name="arch" type="xml">
+                <form string="Medical Printing">
+                    <header>
+                        <button name="action_start_printing" type="object" string="Start Printing" 
+                                class="oe_highlight" states="pending"/>
+                        <button name="action_printed" type="object" string="Printed" 
+                                class="oe_highlight" states="printing"/>
+                        <button name="action_sign" type="object" string="Sign" 
+                                class="oe_highlight" states="printed"/>
+                        <button name="action_deliver" type="object" string="Deliver" 
+                                class="oe_highlight" states="signed"/>
+                        <button name="action_cancel" type="object" string="Cancel" 
+                                states="pending,printing,printed,signed"/>
+                        <button name="action_reset_pending" type="object" string="Reset to Pending" 
+                                states="cancelled"/>
+                        <button name="print_report" type="object" string="Print Report" 
+                                class="oe_highlight" states="printed,signed,delivered"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,printing,printed,signed,delivered"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" placeholder="Printing ID"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Patient Information">
+                                <field name="patient_id"/>
+                                <field name="patient_name"/>
+                                <field name="patient_age"/>
+                                <field name="patient_gender"/>
+                            </group>
+                            <group string="Printing Information">
+                                <field name="report_type"/>
+                                <field name="print_date"/>
+                                <field name="printed_by"/>
+                                <field name="signed_by"/>
+                                <field name="signed_date"/>
+                                <field name="test_count"/>
+                            </group>
+                        </group>
+                        <group string="Report Configuration">
+                            <group>
+                                <field name="include_header"/>
+                                <field name="include_footer"/>
+                            </group>
+                            <group>
+                                <field name="include_logo"/>
+                                <field name="include_signature"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Diagnoses" name="diagnoses">
+                                <field name="diagnosis_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="test_id"/>
+                                        <field name="diagnosis_date"/>
+                                        <field name="diagnosed_by"/>
+                                        <field name="state"/>
+                                        <field name="result_status"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Report Content" name="report_content">
+                                <field name="report_content" readonly="1"/>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="report_notes" placeholder="Enter report notes here..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Printing Search View -->
+        <record id="view_medical_printing_search" model="ir.ui.view">
+            <field name="name">medical.printing.search</field>
+            <field name="model">medical.printing</field>
+            <field name="arch" type="xml">
+                <search string="Search Printing">
+                    <field name="name"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="report_type"/>
+                    <separator/>
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Printing" name="printing" domain="[('state', '=', 'printing')]"/>
+                    <filter string="Printed" name="printed" domain="[('state', '=', 'printed')]"/>
+                    <filter string="Signed" name="signed" domain="[('state', '=', 'signed')]"/>
+                    <filter string="Delivered" name="delivered" domain="[('state', '=', 'delivered')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('print_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Patient" name="group_patient" context="{'group_by': 'patient_id'}"/>
+                        <filter string="Report Type" name="group_report_type" context="{'group_by': 'report_type'}"/>
+                        <filter string="Print Date" name="group_print_date" context="{'group_by': 'print_date:day'}"/>
+                        <filter string="Printed By" name="group_printed_by" context="{'group_by': 'printed_by'}"/>
+                        <filter string="Signed By" name="group_signed_by" context="{'group_by': 'signed_by'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Printing Action -->
+        <record id="action_medical_printing" model="ir.actions.act_window">
+            <field name="name">Printing</field>
+            <field name="res_model">medical.printing</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first printing job!
+                </p>
+                <p>
+                    Manage report printing and delivery workflow.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

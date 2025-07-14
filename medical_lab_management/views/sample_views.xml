@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Sample Tree View -->
+        <record id="view_medical_sample_tree" model="ir.ui.view">
+            <field name="name">medical.sample.tree</field>
+            <field name="model">medical.sample</field>
+            <field name="arch" type="xml">
+                <tree string="Samples" decoration-info="state == 'pending'" decoration-success="state == 'completed'">
+                    <field name="name"/>
+                    <field name="barcode"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="sample_type"/>
+                    <field name="collection_date"/>
+                    <field name="collected_by"/>
+                    <field name="test_count"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Sample Form View -->
+        <record id="view_medical_sample_form" model="ir.ui.view">
+            <field name="name">medical.sample.form</field>
+            <field name="model">medical.sample</field>
+            <field name="arch" type="xml">
+                <form string="Medical Sample">
+                    <header>
+                        <button name="action_collect" type="object" string="Collect Sample" 
+                                class="oe_highlight" states="pending"/>
+                        <button name="action_send_to_lab" type="object" string="Send to Lab" 
+                                class="oe_highlight" states="collected"/>
+                        <button name="action_receive" type="object" string="Receive" 
+                                class="oe_highlight" states="sent_to_lab"/>
+                        <button name="action_processing" type="object" string="Processing" 
+                                class="oe_highlight" states="received"/>
+                        <button name="action_complete" type="object" string="Complete" 
+                                class="oe_highlight" states="processing"/>
+                        <button name="action_cancel" type="object" string="Cancel" 
+                                states="pending,collected,sent_to_lab,received,processing"/>
+                        <button name="action_reset_pending" type="object" string="Reset to Pending" 
+                                states="cancelled"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,collected,sent_to_lab,received,processing,completed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1" placeholder="Sample ID"/>
+                            </h1>
+                            <h2>
+                                <field name="barcode" readonly="1" placeholder="Barcode"/>
+                            </h2>
+                        </div>
+                        <group>
+                            <group string="Patient Information">
+                                <field name="patient_id"/>
+                                <field name="patient_name"/>
+                                <field name="patient_age"/>
+                                <field name="patient_gender"/>
+                            </group>
+                            <group string="Sample Information">
+                                <field name="sample_type"/>
+                                <field name="collection_date"/>
+                                <field name="collected_by"/>
+                                <field name="test_count"/>
+                            </group>
+                        </group>
+                        <group string="Sample Details">
+                            <group>
+                                <field name="volume"/>
+                                <field name="color"/>
+                            </group>
+                            <group>
+                                <field name="appearance"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Tests" name="tests">
+                                <field name="test_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="shortcut"/>
+                                        <field name="sample_type"/>
+                                        <field name="result_type"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Diagnoses" name="diagnoses">
+                                <field name="diagnosis_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="test_id"/>
+                                        <field name="diagnosis_date"/>
+                                        <field name="diagnosed_by"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Notes" name="notes">
+                                <field name="notes" placeholder="Enter sample notes here..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Sample Search View -->
+        <record id="view_medical_sample_search" model="ir.ui.view">
+            <field name="name">medical.sample.search</field>
+            <field name="model">medical.sample</field>
+            <field name="arch" type="xml">
+                <search string="Search Samples">
+                    <field name="name"/>
+                    <field name="barcode"/>
+                    <field name="patient_id"/>
+                    <field name="patient_name"/>
+                    <field name="sample_type"/>
+                    <separator/>
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Collected" name="collected" domain="[('state', '=', 'collected')]"/>
+                    <filter string="Sent to Lab" name="sent_to_lab" domain="[('state', '=', 'sent_to_lab')]"/>
+                    <filter string="Received" name="received" domain="[('state', '=', 'received')]"/>
+                    <filter string="Processing" name="processing" domain="[('state', '=', 'processing')]"/>
+                    <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('collection_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Patient" name="group_patient" context="{'group_by': 'patient_id'}"/>
+                        <filter string="Sample Type" name="group_sample_type" context="{'group_by': 'sample_type'}"/>
+                        <filter string="Collection Date" name="group_collection_date" context="{'group_by': 'collection_date:day'}"/>
+                        <filter string="Collected By" name="group_collected_by" context="{'group_by': 'collected_by'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Sample Action -->
+        <record id="action_medical_sample" model="ir.actions.act_window">
+            <field name="name">Samples</field>
+            <field name="res_model">medical.sample</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_pending': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first sample!
+                </p>
+                <p>
+                    Track sample collection and processing through the complete workflow.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>

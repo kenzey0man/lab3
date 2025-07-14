@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Doctor Tree View -->
+        <record id="view_medical_doctor_tree" model="ir.ui.view">
+            <field name="name">res.partner.medical.doctor.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Doctors" decoration-info="is_doctor">
+                    <field name="name"/>
+                    <field name="specialization"/>
+                    <field name="license_number"/>
+                    <field name="medical_center"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="referral_invoice_count"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+        
+        <!-- Doctor Form View -->
+        <record id="view_medical_doctor_form" model="ir.ui.view">
+            <field name="name">res.partner.medical.doctor.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Doctor">
+                    <header>
+                        <button name="action_view_referrals" type="object" string="View Referrals" 
+                                class="oe_highlight" attrs="{'invisible': [('referral_invoice_count', '=', 0)]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Doctor Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Medical Information">
+                                <field name="is_doctor"/>
+                                <field name="specialization"/>
+                                <field name="license_number"/>
+                                <field name="medical_center"/>
+                            </group>
+                            <group string="Contact Information">
+                                <field name="phone"/>
+                                <field name="mobile"/>
+                                <field name="email"/>
+                                <field name="referral_invoice_count"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Referrals" attrs="{'invisible': [('referral_invoice_count', '=', 0)]}">
+                                <field name="referral_invoice_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="patient_id"/>
+                                        <field name="invoice_date"/>
+                                        <field name="total"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Doctor Search View -->
+        <record id="view_medical_doctor_search" model="ir.ui.view">
+            <field name="name">res.partner.medical.doctor.search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search string="Search Doctors">
+                    <field name="name"/>
+                    <field name="specialization"/>
+                    <field name="license_number"/>
+                    <field name="medical_center"/>
+                    <separator/>
+                    <filter string="Doctors Only" name="doctors" domain="[('is_doctor', '=', True)]"/>
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Specialization" name="group_specialization" context="{'group_by': 'specialization'}"/>
+                        <filter string="Medical Center" name="group_medical_center" context="{'group_by': 'medical_center'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Doctor Action -->
+        <record id="action_medical_doctor" model="ir.actions.act_window">
+            <field name="name">Doctors</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('is_doctor', '=', True)]</field>
+            <field name="context">{'search_default_doctors': 1, 'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first doctor!
+                </p>
+                <p>
+                    Manage referral doctors and their specializations.
+                </p>
+            </field>
+        </record>
+        
+    </data>
+</odoo>
